@@ -28,9 +28,6 @@ autoUpdater.on('download-progress', (progressInfo) => {
 autoUpdater.on('update-downloaded', (updateInfo) => {
     global.logger.log('Update is ready', updateInfo);
 
-    /* Notify user about ready to be installed update */
-    // ...
-
     /* Or force quit app and install update */
     autoUpdater.quitAndInstall();
 });
@@ -41,4 +38,4 @@ autoUpdater.checkForUpdates();
 /* Check updates every minute */
 setInterval(() => {
     autoUpdater.checkForUpdates();
-}, 10 * 60 * 1000);
+}, 60 * 60 * 1000);
