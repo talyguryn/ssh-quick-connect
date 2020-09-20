@@ -1,12 +1,14 @@
 {
   "name": "ssh-quick-connect",
   "version": "0.0.0",
+  "description": "SSH login helper tray app for macOS",
   "main": "src/index.js",
   "license": "MIT",
   "scripts": {
     "start": "electron .",
     "build": "rm -rf dist/ && yarn env-gen && electron-builder",
-    "env-gen": "node src/bin/env-gen.js"
+    "env-gen": "node src/bin/env-gen.js",
+    "ship": "rm -rf dist/ && yarn env-gen && electron-builder -m --x64 -p always"
   },
   "author": "Taly Guryn",
   "repository": {
@@ -17,6 +19,7 @@
     "auto-launch": "^5.0.5",
     "dotenv-json": "^1.0.0",
     "temp-dir": "^2.0.0",
+    "update-electron-app": "^1.5.0",
     "winston": "^3.3.3",
     "winston-daily-rotate-file": "^4.5.0"
   },

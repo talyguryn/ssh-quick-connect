@@ -12,6 +12,9 @@ require("dotenv-json")({
     path: path.join(__dirname, 'env.json')
 });
 
+/* Check for updates */
+require('update-electron-app')();
+
 /**
  * Define global vars
  */
