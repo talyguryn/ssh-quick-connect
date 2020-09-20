@@ -12,8 +12,10 @@ require("dotenv-json")({
     path: path.join(__dirname, 'env.json')
 });
 
-/* Check for updates */
-require('update-electron-app')();
+// /* Check for updates */
+// require('update-electron-app')({
+//     logger: global.logger
+// });
 
 /**
  * Define global vars
@@ -63,6 +65,10 @@ app.on('ready', () => {
          * Prepare tray icon
          */
         createTray();
+
+        if (!require('electron-is-dev')) {
+            require('./utils/autoupdater');
+        }
     } catch (error) {
         global.logger.error(error);
 

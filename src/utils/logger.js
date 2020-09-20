@@ -53,4 +53,10 @@ const logger = winston.createLogger({
     ]
 });
 
-module.exports = logger;
+module.exports = {
+    log: logger.debug.bind(logger),
+    debug: logger.debug.bind(logger),
+    info: logger.info.bind(logger),
+    warn: logger.warn.bind(logger),
+    error: logger.error.bind(logger)
+};
