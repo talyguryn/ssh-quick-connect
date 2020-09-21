@@ -38,4 +38,4 @@ autoUpdater.checkForUpdates();
 /* Check updates every minute */
 setInterval(() => {
     autoUpdater.checkForUpdates();
-}, 2 * 60 * 1000);
+}, 60 * 60 * 1000);
