@@ -35,6 +35,14 @@ const createTray = () => {
     global.sshConfigFilePath = path.join(global.appFolder, 'config.js');
 
     tray.setContextMenu(Menu.buildFromTemplate(require('./menu')));
+    //
+    // tray.on('click', () => {
+    //     tray.popUpContextMenu();
+    // })
+
+    // tray.on('click', function (event) {
+    //     global.logger.log('click!');
+    // });
 
     // fs.watchFile(global.sshConfigFilePath, (curr, prev) => {
     //     global.logger.info('UpDATE');

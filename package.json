@@ -1,6 +1,6 @@
 {
   "name": "ssh-quick-connect",
-  "version": "0.0.17",
+  "version": "0.0.20",
   "description": "SSH login helper tray app for macOS",
   "main": "src/index.js",
   "license": "MIT",
@@ -31,7 +31,6 @@
   "build": {
     "appId": "ssh.quick.connect.app",
     "productName": "SSH Quick Connect",
-    "artifactName": "${productName} v${version} ${platform}.${ext}",
     "directories": {
       "buildResources": "src/build"
     },
