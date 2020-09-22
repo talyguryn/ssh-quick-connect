@@ -4,6 +4,7 @@
  * @usage enable logger
  * global.logger = require('./utils/logger');
  *
+ * @example logger.log('my log %s', variable);
  * @example logger.debug('my log %s', variable);
  * @example logger.info('my log');
  * @example logger.warn('my log');
