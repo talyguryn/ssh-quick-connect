@@ -3,7 +3,6 @@
  */
 const { app, Tray, Menu } = require('electron');
 const path = require('path');
-// const fs = require('fs');
 
 global.appFolder = app.getPath('userData');
 global.logger = require('./utils/logger');
@@ -12,16 +11,10 @@ require("dotenv-json")({
     path: path.join(__dirname, 'env.json')
 });
 
-// /* Check for updates */
-// require('update-electron-app')({
-//     logger: global.logger
-// });
-
 /**
  * Define global vars
  */
 let tray;
-let window;
 
 /**
  *
@@ -37,7 +30,7 @@ const createTray = () => {
     tray.setContextMenu(Menu.buildFromTemplate(require('./menu')));
     //
     // tray.on('click', () => {
-    //     tray.popUpContextMenu();
+        // tray.popUpContextMenu();
     // })
 
     // tray.on('click', function (event) {
