@@ -1,6 +1,7 @@
 const { app, shell } = require('electron');
 const autoLaunch = require('./auto-launch');
 const openSession = require('./actions/session');
+const openBrowser = require('./actions/opener');
 const config = require('./actions/config');
 
 let menuData = [
@@ -31,9 +32,17 @@ if (isGoodConfig) {
             host: '',
             user: 'root',
             port: 22,
+            localTunnelPort: null,
+            remoteHost: 'localhost',
+            action: '',
+            remoteTunnelPort: null
         }, hostData);
 
         let command = `ssh ${data.user}@${data.host}`;
+
+        if (data.localTunnelPort && data.remoteTunnelPort) {
+            command = `ssh -L ${data.localTunnelPort}:${data.remoteHost}:${data.remoteTunnelPort} ${data.user}@${data.host}`;
+        }
 
         if (data.port) {
             command += ` -p ${data.port}`;
@@ -44,6 +53,9 @@ if (isGoodConfig) {
             toolTip: command,
             click() {
                 openSession(command);
+                if (data.action === "url") {
+                    openBrowser(`http://localhost:${data.localTunnelPort}`)
+                }
             }
         };
     };
