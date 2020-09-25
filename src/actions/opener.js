@@ -1,14 +1,12 @@
 const open = require('open');
 
-const WAITING_DELAY = 5000;
-
 function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-const opener = function (url) {
+const opener = function (url, waitingDelay = 0) {
   (async () => {
-    await sleep(WAITING_DELAY);
+    await sleep(waitingDelay);
     await open(url);
   })();
 };
