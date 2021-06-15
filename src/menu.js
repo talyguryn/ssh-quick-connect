@@ -5,6 +5,9 @@ const openBrowser = require('./actions/opener');
 const config = require('./actions/config');
 const path = require('path');
 
+const NAME = 'SSH Quick Connect';
+const VERSION = 'v1.0.0';
+
 const checkSite = require('./utils/checkSite');
 
 const Logger = require('./utils/logger');
@@ -20,9 +23,9 @@ class AppMenu {
     async composeMenu() {
         let menuData = [
             {
-                label: `${process.env.npm_package_build_productName} v${process.env.npm_package_version}`,
+                label: `${NAME} v${VERSION}`,
                 click() {
-                    shell.openExternal(process.env.npm_package_repository_url);
+                    shell.openExternal('https://github.com/talyguryn/ssh-quick-connect');
                 }
             },
             { type: 'separator' },

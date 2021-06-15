@@ -10,7 +10,7 @@ const appPath = app.getPath('exe').replace(/\.app\/Content.*/, '.app');
  * Get launch instance
  */
 const launch = new Autolaunch({
-    name: process.env.npm_package_build_productName,
+    name: 'SSH Quick Connect',
     path: appPath,
     isHidden: false
 });

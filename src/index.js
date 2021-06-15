@@ -9,10 +9,6 @@ const appMenu = require('./menu');
 const Logger = require('./utils/logger');
 const log = Logger.getLogger();
 
-require('dotenv-json')({
-    path: path.join(__dirname, 'env.json')
-});
-
 /**
  * Define global vars
  */

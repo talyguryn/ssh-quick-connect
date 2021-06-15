@@ -33,8 +33,6 @@ class Logger {
          */
         this.logsDirPath = path.join(appData.logsDir);
 
-        console.log(this.logsDirPath);
-
         if (!fs.existsSync(this.logsDirPath)) {
             fs.mkdirSync(this.logsDirPath);
         }

@@ -6,8 +6,7 @@
   "license": "MIT",
   "scripts": {
     "start": "electron .",
-    "build": "rm -rf dist/ && yarn env-gen && electron-builder",
-    "env-gen": "node src/bin/env-gen.js"
+    "build": "rm -rf dist/ && electron-builder"
   },
   "author": "Taly Guryn",
   "repository": {
