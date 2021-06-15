@@ -36,6 +36,13 @@ app.on('ready',  async () => {
         log.info('App is ready');
 
         /**
+         * Do not try to check for updates in dev mode
+         */
+        if (!require('electron-is-dev')) {
+            require('./utils/autoupdater');
+        }
+
+        /**
          * Prepare tray icon
          */
         await createTray();
@@ -48,13 +55,6 @@ app.on('ready',  async () => {
         setInterval(async () => {
             tray.setContextMenu(await appMenu.getMenu());
         }, 60000)
-
-        /**
-         * Do not try to check for updates in dev mode
-         */
-        if (!require('electron-is-dev')) {
-            require('./utils/autoupdater');
-        }
     } catch (error) {
         log.error(error);
 
