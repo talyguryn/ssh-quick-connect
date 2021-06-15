@@ -21,7 +21,7 @@ jobs:
       - name: Build and release
         uses: samuelmeuli/action-electron-builder@v1
         with:
-          build_script_name: 'prebuild'
+          build_script_name: 'build'
           mac_certs: ${{ secrets.mac_certs }}
           mac_certs_password: ${{ secrets.mac_certs_password }}
           github_token: ${{ secrets.github_token }}
