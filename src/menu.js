@@ -6,7 +6,7 @@ const config = require('./actions/config');
 const path = require('path');
 
 const NAME = 'SSH Quick Connect';
-const VERSION = '1.0.1';
+const VERSION = '1.0.2';
 
 const checkSite = require('./utils/checkSite');
 
@@ -92,9 +92,9 @@ class AppMenu {
                         let state = 'state-ok';
                         let message = '';
 
-                        console.log(`Checking ${data.options.url}...`);
+                        log.log(`Checking ${data.options.url}...`);
                         const siteHealth = await checkSite(data.options.url);
-                        console.log(JSON.stringify(siteHealth, 2, 2));
+                        log.log(JSON.stringify(siteHealth, 2, 2));
 
                         if (siteHealth.sslExpireDays && (siteHealth.sslExpireDays < 5) && (siteHealth.sslExpireDays >= 0)) {
                             message = `SSL cert expires in ${siteHealth.sslExpireDays} day${siteHealth.sslExpireDays > 1 ? 's' : ''}\n`

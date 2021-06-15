@@ -67,14 +67,14 @@ app.on('ready',  async () => {
  */
 process.on("uncaughtException", (err) => {
     log.error('uncaughtException');
-    log.error(err);
+    log.error(err.toString());
 
-    throw err;
+    // throw err;
 });
 
 process.on("unhandledRejection", (err) => {
     log.error('unhandledRejection');
-    log.error(err);
+    log.error(err.toString());
 
-    throw err;
+    // throw err;
 });
