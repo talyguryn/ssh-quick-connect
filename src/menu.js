@@ -6,7 +6,7 @@ const config = require('./actions/config');
 const path = require('path');
 
 const NAME = 'SSH Quick Connect';
-const VERSION = '1.0.3';
+const VERSION = '1.0.4';
 
 const checkSite = require('./utils/checkSite');
 
