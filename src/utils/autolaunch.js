@@ -1,4 +1,4 @@
-const AutoLaunch = require('auto-launch');
+const Autolaunch = require('auto-launch');
 const { app } = require('electron');
 
 /**
@@ -9,7 +9,7 @@ const appPath = app.getPath('exe').replace(/\.app\/Content.*/, '.app');
 /**
  * Get launch instance
  */
-const launch = new AutoLaunch({
+const launch = new Autolaunch({
     name: process.env.npm_package_build_productName,
     path: appPath,
     isHidden: false

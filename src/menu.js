@@ -1,127 +1,175 @@
-const { app, shell } = require('electron');
-const autoLaunch = require('./auto-launch');
+const { app, shell, Menu } = require('electron');
+const autolaunch = require('./utils/autolaunch');
 const openSession = require('./actions/session');
 const openBrowser = require('./actions/opener');
 const config = require('./actions/config');
+const path = require('path');
 
-let menuData = [
-    {
-        label: `${process.env.npm_package_build_productName} v${process.env.npm_package_version}`,
-        click() {
-            shell.openExternal(process.env.npm_package_repository_url);
-        }
-    },
-    { type: 'separator' },
-];
+const checkSite = require('./utils/checkSite');
 
-const sshConfigData = config.get();
+const Logger = require('./utils/logger');
+const log = Logger.getLogger();
 
-const isGoodConfig = sshConfigData && sshConfigData.length;
+const STATES = [
+    'state-ok',
+    'state-bad',
+    'state-alert'
+]
 
-if (isGoodConfig) {
-    const composeMenuItem = function (hostData) {
-        if (hostData.items) {
-            return {
-                label: hostData.name,
-                submenu: hostData.items.map(composeMenuItem),
+class AppMenu {
+    async composeMenu() {
+        let menuData = [
+            {
+                label: `${process.env.npm_package_build_productName} v${process.env.npm_package_version}`,
+                click() {
+                    shell.openExternal(process.env.npm_package_repository_url);
+                }
+            },
+            { type: 'separator' },
+        ];
+
+        /**
+         * Get and check config
+         */
+        const sshConfigData = config.get();
+        const isGoodConfig = sshConfigData && sshConfigData.length;
+
+        if (isGoodConfig) {
+            const composeMenuItem = async function (hostData) {
+                let data = Object.assign({
+                    type: '',
+                    options: {},
+                    items: []
+                }, hostData);
+
+                let itemData = {};
+
+                switch (data.type) {
+                    case 'label':
+                        itemData = {
+                            label: data.options.label,
+                            enabled: false
+                        };
+                        break;
+
+                    case 'separator':
+                        itemData = {
+                            type: 'separator'
+                        };
+                        break;
+
+                    case 'submenu':
+                        const submenu = [];
+
+                        for (let submenuItem of data.options.items) {
+                            submenu.push(await composeMenuItem(submenuItem));
+                        }
+
+                        itemData = {
+                            label: data.options.title,
+                            submenu: submenu
+                        }
+                        break;
+
+                    case 'command':
+                        itemData.click = () => {
+                            openSession(data.options.command);
+                        }
+
+                        itemData.label = data.options.title;
+                        itemData.toolTip = data.options.description;
+                        itemData.icon = path.join(__dirname, 'assets', `terminal-Template.png`);
+                        break;
+
+                    case 'link':
+                        itemData.click = () => {
+                            openBrowser(data.options.url);
+                        };
+
+                        let state = 'state-ok';
+                        let message = '';
+
+                        console.log(`Checking ${data.options.url}...`);
+                        const siteHealth = await checkSite(data.options.url);
+                        console.log(JSON.stringify(siteHealth, 2, 2));
+
+                        if (siteHealth.sslExpireDays && (siteHealth.sslExpireDays < 5) && (siteHealth.sslExpireDays >= 0)) {
+                            message = `SSL cert expires in ${siteHealth.sslExpireDays} day${siteHealth.sslExpireDays > 1 ? 's' : ''}\n`
+                            state = 'state-alert';
+                        }
+
+                        if (siteHealth.sslExpireDays && (siteHealth.sslExpireDays < 0)) {
+                            message = `SSL cert expired\n`
+                            state = 'state-bad';
+                        }
+
+                        if (siteHealth.paidTillDays && (siteHealth.paidTillDays < 10)) {
+                            message += `Domain payment expires in ${siteHealth.paidTillDays} day${siteHealth.paidTillDays > 1 ? 's' : '' }\n`
+                            state = 'state-alert';
+                        }
+
+                        if (siteHealth.statusCode && siteHealth.statusCode !== 200) {
+                            state = 'state-bad';
+                            message += `Site responses with ${siteHealth.statusCode} code\n`
+                        }
+
+                        message = message.trim();
+
+                        itemData.label = data.options.title || data.options.url;
+                        itemData.toolTip = message || data.options.description;
+                        itemData.icon = path.join(__dirname, 'assets', `${state}.png`);
+                        break;
+                }
+
+                return itemData;
+            };
+
+            for (let hostData of sshConfigData) {
+                menuData.push(await composeMenuItem(hostData));
             }
         }
 
-        let data = Object.assign({
-            name: '',
-            host: '',
-            domain: null,
-            user: 'root',
-            port: 22,
-            localTunnelPort: null,
-            remoteHost: 'localhost',
-            action: '',
-            remoteTunnelPort: null
-        }, hostData);
-
-        let command = `ssh ${data.user}@${data.host}`;
-        let openUrl = null;
-        let timeDelay = 0;
-
-        if (data.localTunnelPort && data.remoteTunnelPort) {
-            command = `ssh -L ${data.localTunnelPort}:${data.remoteHost}:${data.remoteTunnelPort} ${data.user}@${data.host}`;
-        }
-
-        if (data.port) {
-            command += ` -p ${data.port}`;
-        }
-
-        if (data.action === "url") {
-            openUrl = `http://localhost:${data.localTunnelPort}`;
-            timeDelay = 5000;
-        }
-
-        if (data.domain) {
-            command = null;
-            openUrl = data.domain;
-        }
-
-        return {
-            label: data.name,
-            toolTip: command,
-            click() {
-                if (command) {
-                    openSession(command);
+        /**
+         * Link to config file
+         */
+        if (isGoodConfig) {
+            menuData.push(
+                { type: 'separator' },
+                {
+                    label: `Edit configuration`,
+                    click: config.edit,
                 }
+            );
+        } else {
+            menuData.push(
+                {
+                    label: `Add configuration`,
+                    click: config.edit,
+                },
+                { type: 'separator' }
+            );
+        }
 
-                if (openUrl) {
-                    openBrowser(openUrl, timeDelay);
-                }
+        menuData.push(
+            {
+                label: 'Open at Login',
+                type: 'checkbox',
+                checked: app.getLoginItemSettings().openAtLogin,
+                click: autolaunch.toggle,
+            },
+            { type: 'separator' },
+            {
+                label: `Quit`,
+                role: 'quit'
             }
-        };
-    };
+        );
 
-    menuData.push({
-        label: 'Hosts',
-        enabled: false
-    });
-
-    sshConfigData.forEach((hostData) => {
-        menuData.push(composeMenuItem(hostData));
-    });
-} else {
-    menuData.push({
-        label: 'No hosts found',
-        enabled: false
-    });
-}
-
-if (isGoodConfig) {
-    menuData.push(
-        { type: 'separator' },
-        {
-            label: `Edit configuration`,
-            click: config.edit,
-        }
-    );
-} else {
-    menuData.push(
-        {
-            label: `Add configuration`,
-            click: config.edit,
-        },
-        { type: 'separator' }
-    );
-}
-
-
-menuData.push(
-    {
-        label: 'Open at Login',
-        type: 'checkbox',
-        checked: app.getLoginItemSettings().openAtLogin,
-        click: autoLaunch.toggle,
-    },
-    { type: 'separator' },
-    {
-        label: `Quit`,
-        role: 'quit'
+        return menuData;
     }
-);
 
-module.exports = menuData;
+    async getMenu() {
+        return Menu.buildFromTemplate(await this.composeMenu())
+    }
+}
+
+module.exports = new AppMenu();

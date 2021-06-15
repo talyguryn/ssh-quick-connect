@@ -12,52 +12,69 @@
  */
 const fs = require('fs');
 const path = require('path');
-
-/**
- * Logs will be stored in the app-data/logs
- * @type {string}
- */
-const logsDirPath = path.join(global.appFolder, 'logs');
-
-if (!fs.existsSync(logsDirPath)) {
-    fs.mkdirSync(logsDirPath);
-}
-
 const winston = require('winston');
 const DailyRotateFile = require('winston-daily-rotate-file');
+const { app } = require('electron');
+const appData = require('./appData');
 
-const errorStackFormat = winston.format(info => {
-    if (info instanceof Error) {
-        return Object.assign({}, info, {
-            stack: info.stack,
-            message: info.message
-        })
+/**
+ * Instance of class for singleton
+ */
+let _instance;
+
+class Logger {
+    /**
+     * Prepare logger
+     */
+    constructor() {
+        /**
+         * Logs will be stored in the app-data/logs
+         * @type {string}
+         */
+        this.logsDirPath = path.join(appData.logsDir);
+
+        console.log(this.logsDirPath);
+
+        if (!fs.existsSync(this.logsDirPath)) {
+            fs.mkdirSync(this.logsDirPath);
+        }
     }
-    return info
-})
 
-const logger = winston.createLogger({
-    level: process.env.LOG_LEVEL || 'debug',
-    format: winston.format.combine(
-        winston.format.errors({ stack: true }), // <-- use errors format
-        winston.format.timestamp({
-            format: 'HH:mm:ss'
-        }),
-        winston.format.printf(info => `${info.timestamp} [${info.level}] ${info.message}`+(info.splat!==undefined?`${info.splat}`:" ")+(info.stack!==undefined?`\n${info.stack}`:""))
-    ),
-    transports: [
-        new winston.transports.Console(),
-        new DailyRotateFile({
-            dirname: logsDirPath,
-            filename: '%DATE%.log'
-        })
-    ]
-});
+    getLogger() {
+        const logger = winston.createLogger({
+            level: process.env.LOG_LEVEL || 'debug',
+            format: winston.format.combine(
+                winston.format.errors({ stack: true }), // <-- use errors format
+                winston.format.timestamp({
+                    format: 'HH:mm:ss'
+                }),
+                winston.format.printf(info => `${info.timestamp} [${info.level}] ${info.message}`+(info.splat!==undefined?`${info.splat}`:" ")+(info.stack!==undefined?`\n${info.stack}`:""))
+            ),
+            transports: [
+                new winston.transports.Console(),
+                new DailyRotateFile({
+                    dirname: this.logsDirPath,
+                    filename: '%DATE%.log'
+                })
+            ]
+        });
 
-module.exports = {
-    log: logger.debug.bind(logger),
-    debug: logger.debug.bind(logger),
-    info: logger.info.bind(logger),
-    warn: logger.warn.bind(logger),
-    error: logger.error.bind(logger)
-};
+        return {
+            log: logger.debug.bind(logger),
+            debug: logger.debug.bind(logger),
+            info: logger.info.bind(logger),
+            warn: logger.warn.bind(logger),
+            error: logger.error.bind(logger)
+        };
+    }
+
+    static getInstance() {
+        if (!_instance) {
+            _instance = new Logger();
+        }
+
+        return _instance;
+    }
+}
+
+module.exports = Logger.getInstance();

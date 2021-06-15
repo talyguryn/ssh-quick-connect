@@ -1,20 +1,19 @@
 const { exec } = require('child_process');
-
-let sshConfigFilePath = global.sshConfigFilePath;
+const appData = require('../utils/appData');
 
 const getConfig = function () {
     let sshConfigData = [];
 
     try {
-        sshConfigData = require(sshConfigFilePath);
+        sshConfigData = require(appData.configFile);
     } catch (e) {}
 
     return sshConfigData;
 };
 
 const editConfig = function () {
-    exec(`touch "${sshConfigFilePath}"`);
-    exec(`open -e "${sshConfigFilePath}"`)
+    exec(`touch "${appData.configFile}"`);
+    exec(`open -e "${appData.configFile}"`)
 };
 
 module.exports = {

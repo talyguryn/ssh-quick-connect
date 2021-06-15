@@ -1,6 +1,6 @@
 {
   "name": "ssh-quick-connect",
-  "version": "0.0.26",
+  "version": "1.0.0",
   "description": "SSH login helper tray app for macOS",
   "main": "src/index.js",
   "license": "MIT",
@@ -20,8 +20,11 @@
     "dotenv-json": "^1.0.0",
     "electron-is-dev": "^1.2.0",
     "electron-updater": "^4.3.5",
+    "https": "^1.0.0",
     "open": "^7.2.1",
+    "parse-whois": "^1.0.0",
     "temp-dir": "^2.0.0",
+    "whois": "^2.13.5",
     "winston": "^3.3.3",
     "winston-daily-rotate-file": "^4.5.0"
   },

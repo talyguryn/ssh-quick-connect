@@ -3,11 +3,13 @@
  */
 const { app, Tray, Menu } = require('electron');
 const path = require('path');
+const appData = require('./utils/appData');
+const appMenu = require('./menu');
 
-global.appFolder = app.getPath('userData');
-global.logger = require('./utils/logger');
+const Logger = require('./utils/logger');
+const log = Logger.getLogger();
 
-require("dotenv-json")({
+require('dotenv-json')({
     path: path.join(__dirname, 'env.json')
 });
 
@@ -19,64 +21,64 @@ let tray;
 /**
  *
  */
-const createTray = () => {
+const createTray = async () => {
+    const menu = await appMenu.getMenu();
+
     /**
      * Add app to tray
      */
     tray = new Tray(path.join(__dirname, 'assets', 'tray-icon-Template.png'));
 
-    global.sshConfigFilePath = path.join(global.appFolder, 'config.js');
-
-    tray.setContextMenu(Menu.buildFromTemplate(require('./menu')));
-    //
-    // tray.on('click', () => {
-        // tray.popUpContextMenu();
-    // })
-
-    // tray.on('click', function (event) {
-    //     global.logger.log('click!');
-    // });
-
-    // fs.watchFile(global.sshConfigFilePath, (curr, prev) => {
-    //     global.logger.info('UpDATE');
-    //
-    //     tray.setContextMenu(Menu.buildFromTemplate([
-    //         { type: 'separator' },
-    //         {
-    //             label: `Quit`,
-    //             role: 'quit'
-    //         }
-    //     ]));
-    // });
+    tray.setContextMenu(menu);
 };
-
-/**
- * Don't show app in the dock
- */
-app.dock.hide();
 
 /**
  * On ready initial function
  */
-app.on('ready', () => {
+app.on('ready',  async () => {
     try {
-        global.logger.info('App is ready');
+        log.info('App is ready');
 
         /**
          * Prepare tray icon
          */
-        createTray();
+        await createTray();
 
+        /**
+         * Don't show app in the dock
+         */
+        app.dock.hide();
+
+        setInterval(async () => {
+            tray.setContextMenu(await appMenu.getMenu());
+        }, 60000)
+
+        /**
+         * Do not try to check for updates in dev mode
+         */
         if (!require('electron-is-dev')) {
             require('./utils/autoupdater');
         }
     } catch (error) {
-        global.logger.error(error);
+        log.error(error);
 
         app.quit();
     }
 });
 
+/**
+ * Catch runtime exceptions and rethrow them to "app's onready catch"
+ */
 process.on("uncaughtException", (err) => {
+    log.error('uncaughtException');
+    log.error(err);
+
+    throw err;
+});
+
+process.on("unhandledRejection", (err) => {
+    log.error('unhandledRejection');
+    log.error(err);
+
     throw err;
 });
