@@ -231,7 +231,7 @@ bluebird-lst@^1.0.9:
   dependencies:
     bluebird "^3.5.5"
 
-bluebird@^3.5.5:
+bluebird@^3.5.5, bluebird@^3.7.1:
   version "3.7.2"
   resolved "https://registry.yarnpkg.com/bluebird/-/bluebird-3.7.2.tgz#9f229c15be272454ffa973ace0dbee79a1b0c36f"
   integrity sha512-XpNj6GDQzdfW+r2Wnn7xiSAd7TM3jzkxGXBGTtWKuSXv1xUV+azxAm8jdWZN06QTQk+2N2XB9jRDkvbmQmcRtg==
@@ -343,6 +343,13 @@ chalk@^4.1.0:
   dependencies:
     ansi-styles "^4.1.0"
     supports-color "^7.1.0"
+
+check-internet-connected@^2.0.5:
+  version "2.0.5"
+  resolved "https://registry.yarnpkg.com/check-internet-connected/-/check-internet-connected-2.0.5.tgz#e872b4e65365f875cc9ed5194c18f31137f79f95"
+  integrity sha512-bvS2SCWQGdwWqRS/hlzBKign6AjxZQtBGop/UnFAsBZoDZwSWjoJfcU5MvY+uxtWL3rVOxFIoszugaNz0C5mNg==
+  dependencies:
+    bluebird "^3.7.1"
 
 chromium-pickle-js@^0.2.0:
   version "0.2.0"

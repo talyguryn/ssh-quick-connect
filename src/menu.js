@@ -5,8 +5,10 @@ const openBrowser = require('./actions/opener');
 const config = require('./actions/config');
 const path = require('path');
 
+const checkInternetConnected = require('check-internet-connected');
+
 const NAME = 'SSH Quick Connect';
-const VERSION = '1.0.4';
+const VERSION = '1.0.5';
 
 const checkSite = require('./utils/checkSite');
 
@@ -19,6 +21,8 @@ const STATES = [
     'state-alert'
 ]
 
+let internetAvailable = false;
+
 class AppMenu {
     async composeMenu() {
         let menuData = [
@@ -30,6 +34,12 @@ class AppMenu {
             },
             { type: 'separator' },
         ];
+
+        try {
+            await checkInternetConnected();
+
+            internetAvailable = true;
+        } catch (e) {}
 
         /**
          * Get and check config
@@ -92,28 +102,32 @@ class AppMenu {
                         let state = 'state-ok';
                         let message = '';
 
-                        log.log(`Checking ${data.options.url}...`);
-                        const siteHealth = await checkSite(data.options.url);
-                        log.log(JSON.stringify(siteHealth, 2, 2));
+                        if (internetAvailable) {
+                            log.log(`Checking ${data.options.url}...`);
+                            const siteHealth = await checkSite(data.options.url);
+                            log.log(JSON.stringify(siteHealth, 2, 2));
 
-                        if (siteHealth.sslExpireDays && (siteHealth.sslExpireDays < 5) && (siteHealth.sslExpireDays >= 0)) {
-                            message = `SSL cert expires in ${siteHealth.sslExpireDays} day${siteHealth.sslExpireDays > 1 ? 's' : ''}\n`
-                            state = 'state-alert';
-                        }
+                            if (siteHealth.sslExpireDays && (siteHealth.sslExpireDays < 11) && (siteHealth.sslExpireDays >= 0)) {
+                                message = `SSL cert expires in ${siteHealth.sslExpireDays} day${siteHealth.sslExpireDays > 1 ? 's' : ''}\n`
+                                state = 'state-alert';
+                            }
 
-                        if (siteHealth.sslExpireDays && (siteHealth.sslExpireDays < 0)) {
-                            message = `SSL cert expired\n`
+                            if (siteHealth.sslExpireDays && (siteHealth.sslExpireDays < 0)) {
+                                message = `SSL cert expired\n`
+                                state = 'state-bad';
+                            }
+
+                            if (siteHealth.paidTillDays && (siteHealth.paidTillDays < 11)) {
+                                message += `Domain payment expires in ${siteHealth.paidTillDays} day${siteHealth.paidTillDays > 1 ? 's' : '' }\n`
+                                state = 'state-alert';
+                            }
+
+                            if (siteHealth.statusCode && siteHealth.statusCode !== 200) {
+                                state = 'state-bad';
+                                message += `Site responses with ${siteHealth.statusCode} code\n`
+                            }
+                        } else {
                             state = 'state-bad';
-                        }
-
-                        if (siteHealth.paidTillDays && (siteHealth.paidTillDays < 10)) {
-                            message += `Domain payment expires in ${siteHealth.paidTillDays} day${siteHealth.paidTillDays > 1 ? 's' : '' }\n`
-                            state = 'state-alert';
-                        }
-
-                        if (siteHealth.statusCode && siteHealth.statusCode !== 200) {
-                            state = 'state-bad';
-                            message += `Site responses with ${siteHealth.statusCode} code\n`
                         }
 
                         message = message.trim();

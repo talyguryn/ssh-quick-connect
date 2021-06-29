@@ -1,6 +1,6 @@
 {
   "name": "ssh-quick-connect",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "SSH login helper tray app for macOS",
   "main": "src/index.js",
   "license": "MIT",
@@ -15,6 +15,7 @@
   },
   "dependencies": {
     "auto-launch": "^5.0.5",
+    "check-internet-connected": "^2.0.5",
     "dotenv-json": "^1.0.0",
     "electron-is-dev": "^1.2.0",
     "electron-updater": "^4.3.5",

@@ -54,7 +54,7 @@ app.on('ready',  async () => {
 
         setInterval(async () => {
             tray.setContextMenu(await appMenu.getMenu());
-        }, 60000)
+        }, 5 * 60 * 1000)
     } catch (error) {
         log.error(error);
 
