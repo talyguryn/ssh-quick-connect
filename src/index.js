@@ -52,9 +52,9 @@ app.on('ready',  async () => {
          */
         app.dock.hide();
 
-        setInterval(async () => {
-            tray.setContextMenu(await appMenu.getMenu());
-        }, 5 * 60 * 1000)
+        // setInterval(async () => {
+        //     tray.setContextMenu(await appMenu.getMenu());
+        // }, 5 * 60 * 1000)
     } catch (error) {
         log.error(error);
 

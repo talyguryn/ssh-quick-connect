@@ -21,7 +21,7 @@ const STATES = [
     'state-alert'
 ]
 
-let internetAvailable = false;
+// let internetAvailable = false;
 
 class AppMenu {
     async composeMenu() {
@@ -35,11 +35,11 @@ class AppMenu {
             { type: 'separator' },
         ];
 
-        try {
-            await checkInternetConnected();
-
-            internetAvailable = true;
-        } catch (e) {}
+        // try {
+        //     await checkInternetConnected();
+        //
+        //     internetAvailable = true;
+        // } catch (e) {}
 
         /**
          * Get and check config
@@ -99,42 +99,42 @@ class AppMenu {
                             openBrowser(data.options.url);
                         };
 
-                        let state = 'state-ok';
-                        let message = '';
-
-                        if (internetAvailable) {
-                            log.log(`Checking ${data.options.url}...`);
-                            const siteHealth = await checkSite(data.options.url);
-                            log.log(JSON.stringify(siteHealth, 2, 2));
-
-                            if (siteHealth.sslExpireDays && (siteHealth.sslExpireDays < 11) && (siteHealth.sslExpireDays >= 0)) {
-                                message = `SSL cert expires in ${siteHealth.sslExpireDays} day${siteHealth.sslExpireDays > 1 ? 's' : ''}\n`
-                                state = 'state-alert';
-                            }
-
-                            if (siteHealth.sslExpireDays && (siteHealth.sslExpireDays < 0)) {
-                                message = `SSL cert expired\n`
-                                state = 'state-bad';
-                            }
-
-                            if (siteHealth.paidTillDays && (siteHealth.paidTillDays < 11)) {
-                                message += `Domain payment expires in ${siteHealth.paidTillDays} day${siteHealth.paidTillDays > 1 ? 's' : '' }\n`
-                                state = 'state-alert';
-                            }
-
-                            if (siteHealth.statusCode && siteHealth.statusCode !== 200) {
-                                state = 'state-bad';
-                                message += `Site responses with ${siteHealth.statusCode} code\n`
-                            }
-                        } else {
-                            state = 'state-bad';
-                        }
-
-                        message = message.trim();
+                        // let state = 'state-ok';
+                        // let message = '';
+                        //
+                        // if (internetAvailable) {
+                        //     log.log(`Checking ${data.options.url}...`);
+                        //     const siteHealth = await checkSite(data.options.url);
+                        //     log.log(JSON.stringify(siteHealth, 2, 2));
+                        //
+                        //     if (siteHealth.sslExpireDays && (siteHealth.sslExpireDays < 11) && (siteHealth.sslExpireDays >= 0)) {
+                        //         message = `SSL cert expires in ${siteHealth.sslExpireDays} day${siteHealth.sslExpireDays > 1 ? 's' : ''}\n`
+                        //         state = 'state-alert';
+                        //     }
+                        //
+                        //     if (siteHealth.sslExpireDays && (siteHealth.sslExpireDays < 0)) {
+                        //         message = `SSL cert expired\n`
+                        //         state = 'state-bad';
+                        //     }
+                        //
+                        //     if (siteHealth.paidTillDays && (siteHealth.paidTillDays < 11)) {
+                        //         message += `Domain payment expires in ${siteHealth.paidTillDays} day${siteHealth.paidTillDays > 1 ? 's' : '' }\n`
+                        //         state = 'state-alert';
+                        //     }
+                        //
+                        //     if (siteHealth.statusCode && siteHealth.statusCode !== 200) {
+                        //         state = 'state-bad';
+                        //         message += `Site responses with ${siteHealth.statusCode} code\n`
+                        //     }
+                        // } else {
+                        //     state = 'state-bad';
+                        // }
+                        //
+                        // message = message.trim();
 
                         itemData.label = data.options.title || data.options.url;
-                        itemData.toolTip = message || data.options.description;
-                        itemData.icon = path.join(__dirname, 'assets', `${state}.png`);
+                        // itemData.toolTip = message || data.options.description;
+                        // itemData.icon = path.join(__dirname, 'assets', `${state}.png`);
                         break;
                 }
 
