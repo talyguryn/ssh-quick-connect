@@ -8,6 +8,10 @@ Quick links for servers and sites.
 
 ## Configuration 
 
+Config file path: `~/Library/Application Support/ssh-quick-connect/config.js`
+
+It is a js file with an exported list.
+
 Config is a list of objects with `type` and `options`.
 
 Available types:

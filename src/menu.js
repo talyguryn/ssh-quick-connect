@@ -11,7 +11,7 @@ const checkInternetConnected = require('check-internet-connected');
  * @todo Need to get this from package.json
  */
 const NAME = 'SSH Quick Connect';
-const VERSION = '1.1.0';
+const VERSION = '1.1.2';
 
 const checkSite = require('./utils/checkSite');
 
