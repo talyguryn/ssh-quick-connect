@@ -3,6 +3,7 @@
  */
 const { app, Tray, Menu } = require('electron');
 const path = require('path');
+const fs = require('fs');
 const appData = require('./utils/appData');
 const appMenu = require('./menu');
 
@@ -18,7 +19,7 @@ let tray;
  *
  */
 const createTray = async () => {
-    const menu = await appMenu.getMenu();
+    let menu = await appMenu.getMenu();
 
     /**
      * Add app to tray
@@ -26,6 +27,15 @@ const createTray = async () => {
     tray = new Tray(path.join(__dirname, 'assets', 'tray-icon-Template.png'));
 
     tray.setContextMenu(menu);
+
+    /**
+     * Watch for a config file changes and menu items list
+     */
+    fs.watchFile(appData.configFile, async (curr, prev) => {
+        menu = await appMenu.getMenu();
+
+        tray.setContextMenu(menu);
+    });
 };
 
 /**

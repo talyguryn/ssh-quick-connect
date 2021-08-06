@@ -7,8 +7,11 @@ const path = require('path');
 
 const checkInternetConnected = require('check-internet-connected');
 
+/**
+ * @todo Need to get this from package.json
+ */
 const NAME = 'SSH Quick Connect';
-const VERSION = '1.0.6';
+const VERSION = '1.1.0';
 
 const checkSite = require('./utils/checkSite');
 
@@ -60,7 +63,7 @@ class AppMenu {
                 switch (data.type) {
                     case 'label':
                         itemData = {
-                            label: data.options.label,
+                            label: data.options.title,
                             enabled: false
                         };
                         break;
@@ -98,7 +101,15 @@ class AppMenu {
                         itemData.click = () => {
                             openBrowser(data.options.url);
                         };
+                        itemData.label = data.options.title || data.options.url;
 
+                        /**
+                         * @todo
+                         * State checking is disabled because of task stacking
+                         * if no internet connection while mac is sleeping.
+                         *
+                         * I dont know yet how to fix it so you can help :)
+                         */
                         // let state = 'state-ok';
                         // let message = '';
                         //
@@ -131,8 +142,6 @@ class AppMenu {
                         // }
                         //
                         // message = message.trim();
-
-                        itemData.label = data.options.title || data.options.url;
                         // itemData.toolTip = message || data.options.description;
                         // itemData.icon = path.join(__dirname, 'assets', `${state}.png`);
                         break;

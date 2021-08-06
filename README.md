@@ -1,18 +1,35 @@
 # SSH Quick Connect
 
-Quick links for servers and sites. Checks sites health, ssl certs and domain registration. 
+Quick links for servers and sites.
+
+[comment]: <> (Checks sites health, ssl certs and domain registration. )
 
 ![](./assets/example.png)
 
 ## Configuration 
 
-Config is a list of objects with type and options: 
+Config is a list of objects with `type` and `options`.
 
-- `command` - command to be run in the terminal
-- `link` - link to be opened in browser
-- `separator` - horizontal line
-- `label` - non-clickable item as label
-- `submenu` - list of items
+Available types:
+
+- `command` — command to be run in the terminal
+  - `title` — command's title
+  - `description` — command hint to be shown
+  - `command` — command to be run
+
+- `link` — link to be opened in browser
+  - `url` — site's url
+    
+- `separator` — horizontal line
+  
+- `label` — non-clickable item as label
+  - `title` — label's title
+    
+- `submenu`— list of items
+  - `title` — list's title
+  - `items` — list of item objects (same structure as for main list)
+
+### Example
  
 ```js
 module.exports = [
