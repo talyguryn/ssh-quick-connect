@@ -1,0 +1,1 @@
+/Users/talyguryn/Library/Application Support/ssh-quick-connect/config.js
