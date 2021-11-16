@@ -22,6 +22,7 @@ Available types:
   - `command` — command to be run
 
 - `link` — link to be opened in browser
+  - `title` — link's title
   - `url` — site's url
     
 - `separator` — horizontal line
